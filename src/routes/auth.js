@@ -32,7 +32,7 @@ authRouter.post("/login", async (req, res) => {
 
     const user = await User.findOne({ emailId: emailId });
     if (!user) {
-      throw new Error("Invelid Credentials!");
+      throw new Error("Invalid Credentials!");
     }
 
     const isPasswordValid = await user.validatePassword(password);
@@ -42,14 +42,16 @@ authRouter.post("/login", async (req, res) => {
       // console.log(token);
 
       res.cookie("token", token, {
-        expires: new Date(Date.now() + 8 * 3600000),
+        // expires: new Date(Date.now() + 8 * 3600000),
+        expires: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000), // despite of doing this,the cookie expire showing me,2024-10-30T06:49:42.869Z why?
+        httpOnly: true,
       });
       res.send(user);
     } else {
-      throw new Error("Invelid Credentials!");
+      throw new Error("Invalid Credentials!");
     }
   } catch (error) {
-    res.status(400).send("ERROR:" + error.message);
+    res.status(400).send("ERROR : " + error.message);
   }
 });
 
