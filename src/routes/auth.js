@@ -18,9 +18,19 @@ authRouter.post("/signup", async (req, res) => {
       emailId,
       password: passwordHash,
     });
-    await user.save();
+    const savedUser = await user.save();
 
-    res.send("User created successfully");
+    const token = await user.getJWT();
+
+    // console.log(token);
+
+    res.cookie("token", token, {
+      // expires: new Date(Date.now() + 8 * 3600000),
+      expires: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000), // despite of doing this,the cookie expire showing me,2024-10-30T06:49:42.869Z why?
+      httpOnly: true,
+    });
+
+    res.send(savedUser);
   } catch (error) {
     res.status(400).send("ERROR:" + error.message);
   }
