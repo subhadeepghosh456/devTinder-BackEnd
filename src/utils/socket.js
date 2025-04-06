@@ -23,6 +23,17 @@ const initializeSocket = (server) => {
       socket.join(roomId);
     });
 
+    socket.on("typing", ({ userID, targetUserId }) => {
+      const roomId = getSecrecrRoomId(userID, targetUserId);
+      socket.to(roomId).emit("showTyping", { userID });
+    });
+    
+    socket.on("stopTyping", ({ userID, targetUserId }) => {
+      const roomId = getSecrecrRoomId(userID, targetUserId);
+      socket.to(roomId).emit("hideTyping", { userID });
+    });
+    
+
     socket.on(
       "sendMessage",
       async ({ firstName, lastName, emailId, userID, targetUserId, text }) => {
